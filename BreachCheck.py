@@ -5,9 +5,12 @@ import argparse
 # Creating ArgParse stuffs
 parser = argparse.ArgumentParser(description='BreachCheck is a tool designed to help users search for their passwords in known data breaches and leaks. It utilizes the breachdirectory.org API')
 parser.add_argument('-t', '--target', metavar='TARGET', required=True, help='Target email or username')
+parser.add_argument('-oR', '--output-raw', metavar='FILE', required=False, help='Output the full json API call result to a file')
+parser.add_argument('-oN', '--output-normal', metavar='FILE', required=False, help='Output the passwords list to a file')
 args = parser.parse_args()
 target = args.target
-
+output_raw = args.output_raw
+output_normal = args.output_normal
 
 # ANSI escape codes for colors
 class colors:
@@ -51,17 +54,35 @@ def req_breachdirectory(target):
         return False
     
 def print_breachdirectory_auto_mode(answer):
+
+    if(output_raw):
+        with open(output_raw, "w") as file:
+            json.dump(answer,file)
+    if(output_normal):
+        file_normal = open(output_normal, "w")
+
+    #Check if answer is not set to False
     if(not answer):
-        print(colors.RED + '[-] ' + colors.RESET +f'BreachDirectory failed\n')
+        print(colors.RED + '[-] ' + colors.RESET +f'API call to BreachDirectory fails\n')
         return False
-    print(colors.GREEN + '[+] ' + colors.RESET +f'BreachDirectory')
+    
+    #Check if API Call does not failed
     success = answer["success"]
     if(not success): 
-        print(colors.RED + '[-] ' + colors.RESET +'Nothing found')
+        print(colors.RED + '[-] ' + colors.RESET +f'API call to BreachDirectory fails\n')
         return False
+    
+    # API Call is a success
     found = answer["found"]
-    print(colors.GREEN + '[+] ' + colors.RESET +f'Success, found target in '+ colors.GREEN + f"{found}" +colors.RESET + ' data breaches')
+    print(colors.GREEN + '[+] ' + colors.RESET +f'Successful API call to BreachDirectory')
+    print(colors.GREEN + '[+] ' + colors.RESET +f'Found target in '+ colors.GREEN + f"{found}" +colors.RESET + ' data breaches')
 
+    # Print if result[] is empty
+    result = answer["result"]
+    if(len(result)==0):
+        print(colors.RED + '[-] ' + colors.RESET +f"Target's password not found in data breaches \n")
+        return False
+    
     for entry in answer["result"]:
         if not entry["email_only"]:
             sources = ', '.join(entry["sources"])
@@ -69,6 +90,8 @@ def print_breachdirectory_auto_mode(answer):
             
             password = line.split(':')[1].strip()
             print(colors.GREEN + '[+] ' + colors.RESET + f"{sources}: " + colors.GREEN +password + colors.RESET)
+            if(output_normal):
+                file_normal.writelines(f"{password}\n")
     print("")
 
 # This is main function for BreachDirectory

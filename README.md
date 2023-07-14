@@ -20,8 +20,11 @@ Before running BreachCheck, make sure to configure your API Key in the `conf.jso
 
 To use BreachCheck, run the following command:
 ```bash
-#Target can be username or email
+#Simple use, target can be username or email
 python BreachCheck.py -t <target>
+
+#Output passwords to a file
+python BreachCheck.py -t <target> -oN target_passwords.txt
 ```
 
 # Exemples 
