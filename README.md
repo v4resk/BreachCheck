@@ -8,5 +8,22 @@ Our aim is to promote responsible and ethical use of BreachCheck to empower indi
 
 ## Usage
 
+Fisrt clone and install
+```bash
+git clone https://github.com/v4resk/BreachCheck
+cd BreachCheck
+pip install -r requirements.txt
+```
 
-https://rapidapi.com/rohan-patra/api/breachdirectory/pricing
+Before running BreachCheck, make sure to configure your API Key in the `conf.json` file. If you don't have one, sign-up on RapidAPI and choose the **Basic** plan (It's free) or Pro Plan (not free) for the [BreachDirectory API](https://rapidapi.com/rohan-patra/api/breachdirectory/)
+
+
+To use BreachCheck, run the following command:
+```bash
+#Target can be username or email
+python BreachCheck.py -t <target>
+```
+
+# Exemples 
+
+![Email Target](/assets/screenshot_email_target.png)
