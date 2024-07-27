@@ -63,24 +63,24 @@ def print_breachdirectory_auto_mode(answer):
 
     #Check if answer is not set to False
     if(not answer):
-        print(colors.RED + '[-] ' + colors.RESET +f'API call to BreachDirectory fails\n')
+        print(f"{colors.RED}[-]{colors.RESET} API call to BreachDirectory fails\n")
         return False
     
     #Check if API Call does not failed
     success = answer["success"]
     if(not success): 
-        print(colors.RED + '[-] ' + colors.RESET +f'API call to BreachDirectory fails\n')
+        print(f"{colors.RED}[-]{colors.RESET} API call to BreachDirectory fails\n")
         return False
     
     # API Call is a success
     found = answer["found"]
-    print(colors.GREEN + '[+] ' + colors.RESET +f'Successful API call to BreachDirectory')
-    print(colors.GREEN + '[+] ' + colors.RESET +f'Found target in '+ colors.GREEN + f"{found}" +colors.RESET + ' data breaches')
+    print(f"{colors.GREEN}[+]{colors.RESET} Successful API call to BreachDirectory")
+    print(f"{colors.GREEN}[+]{colors.RESET} Found target in {colors.GREEN}{found}{colors.RESET} data breaches")
 
     # Print if result[] is empty
     result = answer["result"]
     if(len(result)==0):
-        print(colors.RED + '[-] ' + colors.RESET +f"Target's password not found in data breaches \n")
+        print(f"{colors.RED}[-]{colors.RESET} Target's password not found in data breaches \n")
         return False
     
     print("")
@@ -98,34 +98,25 @@ def print_breachdirectory_auto_mode(answer):
             if sha1 != 'N/A':
                 sha1_hashes.append((source, sha1))
 
-            
-            """
-            sources = ', '.join(entry["sources"])
-            line = entry["line"]
-            
-            password = line.split(':')[1].strip()
-            if(output_normal):
-                file_normal.writelines(f"{password}\n")
-            """
     if len(plaintext_passwords) > 0:
         print(f"{colors.GREEN}[+]{colors.RESET} Plaintext Passwords")
         for source, password in plaintext_passwords:
             print(f"{colors.GREEN}[+]{colors.RESET} {source}: {colors.GREEN}{password}{colors.RESET}")
+            if(output_normal):
+                file_normal.writelines(f"Password: {password}\n")
             
     if len(sha1_hashes) > 0:
         print(f"\n{colors.GREEN}[+]{colors.RESET} SHA1 Passwords")
         for source, hash_value in sha1_hashes:
             print(f"{colors.GREEN}[+]{colors.RESET} {source}: {colors.GREEN}{hash_value}{colors.RESET}")
-            
+            if(output_normal):
+                file_normal.writelines(f"SH1: {hash_value}\n")
     print("")
 
 # This is main function for BreachDirectory
 def breachdirectory(target):
     breachedDirectory_answer = req_breachdirectory(target)
-    #with open("rep.json",'r') as file:
-        #breachedDirectory_answer = json.load(file)
     print_breachdirectory_auto_mode(breachedDirectory_answer)
-
 
 if __name__ == '__main__':
     breachdirectory(target)
