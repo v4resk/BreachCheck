@@ -83,15 +83,40 @@ def print_breachdirectory_auto_mode(answer):
         print(colors.RED + '[-] ' + colors.RESET +f"Target's password not found in data breaches \n")
         return False
     
+    print("")
+    plaintext_passwords = []
+    sha1_hashes = []
     for entry in answer["result"]:
-        if not entry["email_only"]:
+        if entry["email"]:
+            #email = entry.get('email', 'N/A')
+            password = entry.get('password', 'N/A')
+            sha1 = entry.get('sha1', 'N/A')
+            source = entry.get('sources', 'N/A')
+
+            if password != 'N/A':
+                plaintext_passwords.append((source, password))
+            if sha1 != 'N/A':
+                sha1_hashes.append((source, sha1))
+
+            
+            """
             sources = ', '.join(entry["sources"])
             line = entry["line"]
             
             password = line.split(':')[1].strip()
-            print(colors.GREEN + '[+] ' + colors.RESET + f"{sources}: " + colors.GREEN +password + colors.RESET)
             if(output_normal):
                 file_normal.writelines(f"{password}\n")
+            """
+    if len(plaintext_passwords) > 0:
+        print(f"{colors.GREEN}[+]{colors.RESET} Plaintext Passwords")
+        for source, password in plaintext_passwords:
+            print(f"{colors.GREEN}[+]{colors.RESET} {source}: {colors.GREEN}{password}{colors.RESET}")
+            
+    if len(sha1_hashes) > 0:
+        print(f"\n{colors.GREEN}[+]{colors.RESET} SHA1 Passwords")
+        for source, hash_value in sha1_hashes:
+            print(f"{colors.GREEN}[+]{colors.RESET} {source}: {colors.GREEN}{hash_value}{colors.RESET}")
+            
     print("")
 
 # This is main function for BreachDirectory
